@@ -25,7 +25,7 @@ class DataLoader:
 
         Returns:
             pd.DataFrame: _description_
-        """   
+        """
         dataframes = [pd.read_csv(path, sep="\t", encoding='ISO-8859-1') if "S10" in path else pd.read_csv(path, sep="\t") for path in self.paths]
         self.data = pd.concat(dataframes, ignore_index=True)
     def prepare_dataset(self) -> DatasetDict:
@@ -59,7 +59,7 @@ class EmbeddingsManager:
     def load_embedding(self, path = "question_embeddings.npy"):
         self.question_embeddings = np.load(path)
 
-    def save_embeddings(self, embeddings, path = "question_embeddings.npy")
+    def save_embeddings(self, embeddings, path = "question_embeddings.npy"):
         np.save(path, embeddings)
         self.question_embeddings = embeddings
 
@@ -78,8 +78,8 @@ class QuestionAnswerSystem:
         self.embedding_manager.save_embeddings(self.embedding_manager.question_embeddings)
     
     def find_answer(self, new_question):
-        new_question_embedding = self.embeddings_manager.get_embeddings(new_question).reshape(1, -1)
-        similarities = cosine_similarity(new_question_embedding, self.embeddings_manager.question_embeddings).flatten()
+        new_question_embedding = self.embedding_manager.get_embeddings(new_question).reshape(1, -1)
+        similarities = cosine_similarity(new_question_embedding, self.embedding_manager.question_embeddings).flatten()
         closest_question_idx = np.argmax(similarities)
-        return self.responses[closest_question_idx]
+        return self.answers[closest_question_idx]
     
