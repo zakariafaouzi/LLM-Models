@@ -28,6 +28,7 @@ class DataLoader:
         """
         dataframes = [pd.read_csv(path, sep="\t", encoding='ISO-8859-1') if "S10" in path else pd.read_csv(path, sep="\t") for path in self.paths]
         self.data = pd.concat(dataframes, ignore_index=True)
+        return self.data
     def prepare_dataset(self) -> DatasetDict:
         """_summary_
 
@@ -45,16 +46,18 @@ class DataLoader:
 class EmbeddingsManager:
     """Une classe manager pour avoir les embeddings des textes
     """    
-    def __init__(self, model_name = "bert_base_uncased"):
+    def __init__(self, model_name = "bert-base-uncased"):
         self.tokenizer = BertTokenizer.from_pretrained(model_name)
         self.model = BertModel.from_pretrained(model_name)
-        self.question_embeddings = None
+        #self.question_embeddings = None
 
     def get_embeddings(self, text):
-        inputs = self.tokenizer(text, return_tensor = "pt", padding = True, truncation = True)
+        # Tokenisation avec retour en tenseurs
+        inputs = self.tokenizer(text, return_tensors="pt", padding=True, truncation=True)
         with torch.no_grad():
             outputs = self.model(**inputs)
-        return outputs.last_hidden_state.mean(dim = 1).squeeze().numpy()
+        # Prendre la moyenne des embeddings sur la séquence
+        return outputs.last_hidden_state.mean(dim=1).squeeze().numpy()
     
     def load_embedding(self, path = "question_embeddings.npy"):
         self.question_embeddings = np.load(path)
