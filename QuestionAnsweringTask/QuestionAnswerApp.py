@@ -14,7 +14,8 @@ class DataLoader:
         self.paths = paths
         self.data = None
         self.dataset_dict = None   
-    def lire_data(self) -> pd.DataFrame:
+    
+    def lire_data(self):
         """_summary_
 
         Returns:
@@ -27,9 +28,15 @@ class DataLoader:
         Returns:
             pd.DataFrame: _description_
         """
-        dataframes = [pd.read_csv(path, sep="\t", encoding='ISO-8859-1') if "S10" in path else pd.read_csv(path, sep="\t") for path in self.paths]
-        self.data = pd.concat(dataframes, ignore_index=True)
-        return self.data
+        dataframes = []
+        for path in self.paths:
+            try:
+                encoding = 'ISO-8859-1' if "S10" in path else None
+                df = pd.read_csv(path, sep="\t", encoding=encoding)
+                dataframes.append(df)
+            except FileNotFoundError:
+                print(f"File not found: {path}")
+        return dataframes
     
     def prepare_dataset(self) -> DatasetDict:
         """_summary_
