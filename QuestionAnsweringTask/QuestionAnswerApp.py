@@ -36,7 +36,7 @@ class DataLoader:
                 dataframes.append(df)
             except FileNotFoundError:
                 print(f"File not found: {path}")
-        return dataframes
+        return pd.concat(dataframes, ignore_index=True)
     
     def prepare_dataset(self) -> DatasetDict:
         """_summary_
